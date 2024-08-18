@@ -23,7 +23,7 @@ class TradeController extends Controller
         } catch (\Exception $exception) {
             return response()->json([
                 "status" => false,
-                "message" => $exception->getMessage(). "Somthing want wrong Please try again..",
+                "message" => $exception->getMessage(). " Somthing want wrong Please try again..",
             ]);
         }
     }
