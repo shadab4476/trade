@@ -20,4 +20,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::post("/trading/index", [TradeController::class, "store"]);
+Route::post("/trading/add", [TradeController::class, "store"]);
+Route::post("/trading/index", [TradeController::class, "index"]);
+Route::post("/trading/edit/{id?}", [TradeController::class, "update"]);

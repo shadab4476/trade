@@ -12,14 +12,20 @@ class TradeController extends Controller
      */
     public function index()
     {
-        $trade = Trade::get();
-
-        // if ($trade->count()) {
-        return response()->josn([
-            "status" => true,
-            "data" => $trade->count(),
-        ]);
-        // }
+        try {
+            $trade = Trade::get();
+            if ($trade->count() > 0) {
+                return response()->json([   
+                    "status" => true,
+                    "data" => $trade,
+                ]);
+            }
+        } catch (\Exception $exception) {
+            return response()->json([
+                "status" => false,
+                "message" => $exception->getMessage(). "Somthing want wrong Please try again..",
+            ]);
+        }
     }
 
     /**
@@ -82,10 +88,7 @@ class TradeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+    public function update(Request $request, string $id) {}
 
     /**
      * Remove the specified resource from storage.
