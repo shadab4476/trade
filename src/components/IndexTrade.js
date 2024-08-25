@@ -4,7 +4,9 @@ import { Link, useNavigate } from 'react-router-dom';
 
 function IndexTrade() {
     const redirect = useNavigate();
+    const [isDeleteId, setIsDeleteId] = useState(null);
     const [isLoader, setIsLoader] = useState(true);
+    const [isDeleteCheck, setIsDeleteCheck] = useState(false);
     const [deleteError, setDeleteError] = useState("");
     const [error, setError] = useState("");
     const [trade, setTrade] = useState([]);
@@ -14,6 +16,9 @@ function IndexTrade() {
 
     const deleteTrade = async (id) => {
         setIsLoader(true);
+        setIsDeleteCheck(false);
+        setIsDeleteId(null);
+
         await axios.post("http://localhost:8000/api/trading/delete/" + id).then(({ data }) => {
             if (data.status == false) {
                 setDeleteError("Somthing went wrong Please try again!!");
@@ -23,9 +28,16 @@ function IndexTrade() {
             }
             setIsLoader(false);
         });
-
+    }
+    const handleDeleteCheck = (id) => {
+        setIsDeleteCheck(true);
+        setIsDeleteId(id);
     }
 
+    const handleDeleteCancel = (id) => {
+        setIsDeleteCheck(false);
+        setIsDeleteId(null);
+    }
     const getTrade = async () => {
         await axios.post("http://localhost:8000/api/trading/index").then(({ data }) => {
             try {
@@ -95,7 +107,21 @@ function IndexTrade() {
                                     </td>
                                     <td className="px-6 py-4 flex justify-between">
                                         <Link to={`/edit/${data.id}`} className="font-medium p-1 text-blue-600 dark:text-blue-500 hover:underline">Edit</Link>
-                                        <button onClick={() => deleteTrade(data.id)} className="font-medium p-1 text-red-600 dark:text-blue-500 hover:underline">Delete</button>
+                                        {isDeleteCheck ? <div>
+                                            <div className="fixed inset-0 bg-gray-900 bg-opacity-75  flex justify-center items-center">
+                                                <div className="bg-white rounded-lg shadow-md p-4 w-[25%]">
+                                                    <h2 className="text-lg font-bold mb-2">Confirm Delete</h2>
+                                                    <p className="text-gray-600 mb-4">Are you sure you want to delete this trade? <i><b>"{isDeleteId}"</b></i></p>
+                                                    <div className="flex justify-between">
+                                                        <button onClick={() => deleteTrade(isDeleteId)} className="font-medium py-2 px-4 rounded  transition-all  text-red-600 dark:text-blue-500 hover:underline hover:text-gray-200 hover:bg-red-400 ">Delete</button>
+                                                        <button className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded" onClick={() => { handleDeleteCancel(data.id) }}>
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> : ""}
+                                        <button onClick={() => { handleDeleteCheck(data.id) }} className="font-medium p-1 text-red-600 dark:text-blue-500 hover:underline">Delete</button>
                                     </td>
                                 </tr>
                                 )
